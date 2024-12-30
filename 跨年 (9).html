@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>剪刀石头布</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(45deg, #6a11cb, #2575fc);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #fff;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .game-container {
+            background-color: rgba(0, 0, 0, 0.7);
+            border-radius: 15px;
+            padding: 40px;
+            width: 100%;
+            max-width: 500px;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+        }
+
+        .title {
+            font-size: 40px;
+            margin-bottom: 20px;
+            color: #fff;
+            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+        }
+
+        .instructions {
+            font-size: 18px;
+            margin-bottom: 30px;
+            color: #f2f2f2;
+            opacity: 0.8;
+        }
+
+        input {
+            font-size: 20px;
+            padding: 10px 15px;
+            width: 100%;
+            border-radius: 5px;
+            border: none;
+            margin-bottom: 20px;
+            outline: none;
+            transition: all 0.3s;
+        }
+
+        input:focus {
+            border: 2px solid #2575fc;
+            box-shadow: 0 0 8px #2575fc;
+        }
+
+        .result {
+            font-size: 22px;
+            margin-top: 20px;
+            font-weight: bold;
+            color: #ffd700;
+        }
+
+        .button {
+            background-color: #28a745;
+            color: white;
+            padding: 10px 25px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 18px;
+            margin-top: 30px;
+        }
+
+        .button:hover {
+            background-color: #218838;
+            transform: scale(1.1);
+        }
+
+        .button:active {
+            background-color: #1e7e34;
+            transform: scale(1.05);
+        }
+
+        .emoji {
+            font-size: 60px;
+            margin: 20px 0;
+            opacity: 0.8;
+        }
+
+        .history {
+            margin-top: 30px;
+            font-size: 16px;
+            color: #f2f2f2;
+        }
+
+        .history ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .history li {
+            margin-bottom: 10px;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="game-container">
+        <div class="title">剪刀石头布</div>
+        <div class="instructions">
+            请键入“剪刀”，“石头”或“布”开始游戏！
+        </div>
+        <input type="text" id="userInput" placeholder="输入你的选择..." oninput="validateInput()">
+        <div class="emoji" id="emojiDisplay"></div>
+        <div class="result" id="result"></div>
+        <button class="button" onclick="resetGame()">重新开始</button>
+        <div class="history">
+            <h3>游戏历史</h3>
+            <ul id="historyList"></ul>
+        </div>
+    </div>
+
+    <script>
+        const choices = ['剪刀', '石头', '布'];
+
+        let userChoiceValue = '';
+        let computerChoiceValue = '';
+        let resultMessage = '';
+        let gameHistory = [];
+
+        const inputElement = document.getElementById('userInput');
+        const resultElement = document.getElementById('result');
+        const emojiElement = document.getElementById('emojiDisplay');
+        const historyListElement = document.getElementById('historyList');
+
+        // 监听输入框的变化
+        function validateInput() {
+            const userInput = inputElement.value.trim();
+            if (choices.includes(userInput)) {
+                userChoiceValue = userInput;
+                computerChoiceValue = choices[Math.floor(Math.random() * 3)];
+                determineWinner();
+            }
+        }
+
+        // 判断胜负
+        function determineWinner() {
+            if (userChoiceValue === computerChoiceValue) {
+                resultMessage = `平局！你和计算机都选择了${userChoiceValue}`;
+                emojiElement.innerHTML = '😐';
+            } else if (
+                (userChoiceValue === '剪刀' && computerChoiceValue === '布') ||
+                (userChoiceValue === '石头' && computerChoiceValue === '剪刀') ||
+                (userChoiceValue === '布' && computerChoiceValue === '石头')
+            ) {
+                resultMessage = `你赢了！你选择了${userChoiceValue}，计算机选择了${computerChoiceValue}`;
+                emojiElement.innerHTML = '🏆';
+            } else {
+                resultMessage = `你输了！你选择了${userChoiceValue}，计算机选择了${computerChoiceValue}`;
+                emojiElement.innerHTML = '😢';
+            }
+
+            displayResult(resultMessage);
+            saveGameHistory(resultMessage);
+        }
+
+        // 显示结果
+        function displayResult(message) {
+            resultElement.innerHTML = `<p>${message}</p>`;
+        }
+
+        // 保存游戏历史
+        function saveGameHistory(message) {
+            gameHistory.push(message);
+            const listItem = document.createElement('li');
+            listItem.textContent = message;
+            historyListElement.appendChild(listItem);
+        }
+
+        // 重置游戏
+        function resetGame() {
+            userChoiceValue = '';
+            computerChoiceValue = '';
+            resultMessage = '';
+            inputElement.value = '';
+            resultElement.innerHTML = '';
+            emojiElement.innerHTML = '';
+        }
+    </script>
+
+</body>
+</html>
